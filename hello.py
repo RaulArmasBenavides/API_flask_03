@@ -33,5 +33,5 @@ def hello_ssti():
     template = TEMPLATE.replace("FOO", person['name'])
     return render_template_string(template, person=person)
 
-
-app.run(debug=True)
+if __name__ =="__main__":
+    app.run(debug=True)
