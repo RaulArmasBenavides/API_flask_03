@@ -1,10 +1,25 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask import request, render_template_string, render_template
-app = Flask(__name__)
+from flask_restx import Api, Resource, fields
 
-TEMPLATE = '''
-<html>
+app = Flask(__name__)
+api = Api(app, version='1.0', title='Mi API Flask',description='Una simple API demo')
+
+
+# Definir un namespace
+ns = api.namespace('demo', description='Operaciones demo')
+
+# Modelo para el endpoint /submit
+submit_model = api.model('SubmitModel', {
+    'clave': fields.String(required=True, description='Clave de ejemplo'),
+    'valor': fields.String(required=True, description='Valor de ejemplo')
+})
+
+api.add_namespace(ns)
+
+TEMPLATE = '''<html>
 <head><title> Hello {{ person.name }} </title></head>
+<div><h3>Prueba<h/3></div>
 <body> Hello FOO </body>
 </html>
 '''
@@ -14,14 +29,27 @@ TEMPLATE = '''
 def index():
     return 'hola mundo perú'
 
-@app.route("/hello")
-def hello():
-    return 'Hola mundo q tal'
+@api.route('/hello')
+class HelloResource(Resource):
+    def get(self):
+        '''Devuelve un saludo básico'''
+        return 'Hola mundo q tal'
 
+@ns.route('/hello')
+class HelloResource(Resource):
+    def get(self):
+        '''Devuelve un saludo básico'''
+        return 'Hola mundo q tal'
 
-@app.route("/nosotros")
-def nosotros():
-    return 'Contactanos'
+@api.route('/nosotros')
+class NosotrosResource(Resource):
+    def get(self):
+        '''Devuelve información de contacto'''
+        return 'Contactanos'
+
+@app.route("/test")
+def test2():
+    return 'esto es una prueba'
 
 
 @app.route('/hello-ssti')
@@ -32,6 +60,23 @@ def hello_ssti():
     # Replace FOO with person's name
     template = TEMPLATE.replace("FOO", person['name'])
     return render_template_string(template, person=person)
+
+# @app.router('/suma/<int:num1>/<int:num2>')
+# @app.router('/suma/<float:num1>/<int:num2>')
+# @app.router('/suma/<float:num1>/<float:num2>')
+# @app.router('/suma/<int:num1>/<float:num2>')
+# def suma(num1 =0 ,num2= 0):
+#     contexto = {'num1':num1, 'num2':num2}
+#     return render_template("suma.html",**contexto)
+
+@app.route('/submit', methods=['POST'])
+def submit_data():
+    # Asumiendo que los datos enviados son JSON
+    data = request.json
+    # Procesa tus datos aquí. Por ejemplo, imprimirlos en la consola.
+    print(data)
+    # Devuelve una respuesta
+    return jsonify({"message": "Datos recibidos correctamente"}), 200
 
 if __name__ =="__main__":
     app.run(debug=True)
