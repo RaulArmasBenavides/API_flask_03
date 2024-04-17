@@ -17,12 +17,7 @@ submit_model = api.model('SubmitModel', {
 
 api.add_namespace(ns)
 
-TEMPLATE = '''<html>
-<head><title> Hello {{ person.name }} </title></head>
-<div><h3>Prueba<h/3></div>
-<body> Hello FOO </body>
-</html>
-'''
+
 
 @app.route("/")
 @app.route("/index")
@@ -51,6 +46,28 @@ class NosotrosResource(Resource):
 def test2():
     return 'esto es una prueba'
 
+@app.route('/hello-insecure')
+def hello_ssti_insecure():
+    person = {'name':"world", 'secret':'jo5gmvlligcZ5YZGenWnGcol8JnwhWZd2lJZYo=='}
+    if request.args.get('name'):
+        person['name'] = request.args.get('name')
+    template = '<h2>Hello %s!</h2>' % person['name']
+    return render_template_string(template, person=person)
+
+@app.route('/hello-ssti2')
+def hello_ssti2():
+    person = {'name':"world", 'secret': 'jo5gmvlligcZ5YZGenWnGcol8JnwhWZd2lJZYo=='}
+    if request.args.get('name'):
+        person['name'] = request.args.get('name')
+    template = '<h2>Hello {{ person.name }} !</h2>'
+    return render_template_string(template, person=person)
+
+TEMPLATE = '''<html>
+<head><title> Hello </title></head>
+<div><h3>Prueba<h/3></div>
+<body> Hello {{ person.name }}  </body>
+</html>
+'''
 
 @app.route('/hello-ssti')
 def hello_ssti():
@@ -58,8 +75,10 @@ def hello_ssti():
     if request.args.get('name'):
        person['name'] = request.args.get('name')
     # Replace FOO with person's name
-    template = TEMPLATE.replace("FOO", person['name'])
-    return render_template_string(template, person=person)
+    # template = TEMPLATE.replace("FOO", person['name'])
+    return render_template_string(TEMPLATE, person=person)
+
+
 
 # @app.router('/suma/<int:num1>/<int:num2>')
 # @app.router('/suma/<float:num1>/<int:num2>')
