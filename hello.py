@@ -78,8 +78,6 @@ def hello_ssti():
     # template = TEMPLATE.replace("FOO", person['name'])
     return render_template_string(TEMPLATE, person=person)
 
-
-
 # @app.router('/suma/<int:num1>/<int:num2>')
 # @app.router('/suma/<float:num1>/<int:num2>')
 # @app.router('/suma/<float:num1>/<float:num2>')
