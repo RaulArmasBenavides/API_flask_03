@@ -96,4 +96,4 @@ def submit_data():
     return jsonify({"message": "Datos recibidos correctamente"}), 200
 
 if __name__ =="__main__":
-    app.run(debug=false)
+    app.run()
