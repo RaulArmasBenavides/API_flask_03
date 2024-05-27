@@ -28,13 +28,13 @@ def index():
 class HelloResource(Resource):
     def get(self):
         '''Devuelve un saludo básico'''
-        return 'Hola mundo q tal'
+        return 'Hola mundo q tal, soy estudiante de la UNFV'
 
 @ns.route('/hello')
 class HelloResource(Resource):
     def get(self):
         '''Devuelve un saludo básico'''
-        return 'Hola mundo q tal'
+        return 'Hola mundo q tal, soy estudiante de la UNFV'
 
 @api.route('/nosotros')
 class NosotrosResource(Resource):
